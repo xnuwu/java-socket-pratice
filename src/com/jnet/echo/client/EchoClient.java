@@ -1,4 +1,4 @@
-package com.jnet.client;
+package com.jnet.echo.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;

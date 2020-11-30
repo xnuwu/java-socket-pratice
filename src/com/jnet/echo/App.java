@@ -1,4 +1,4 @@
-package com.jnet;
+package com.jnet.echo;
 
 import java.io.*;
 

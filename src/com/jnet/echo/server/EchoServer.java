@@ -1,4 +1,4 @@
-package com.jnet.server;
+package com.jnet.echo.server;
 
 import java.io.*;
 import java.net.ServerSocket;
