@@ -8,7 +8,9 @@ package com.jnet.socket;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.*;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -67,7 +69,7 @@ class LingerServer {
 
     public void receive() throws IOException, InterruptedException {
         Socket socket = serverSocket.accept();
-        Thread.sleep(4000);
+        Thread.sleep(1000);
         InputStream inputStream = socket.getInputStream();
         int total = 0;
         int len;
@@ -98,15 +100,16 @@ class LingerClient {
 
     public void send() throws IOException {
 
-        this.socket.setSoLinger(true, 0);
+        this.socket.setSoLinger(true, 1);
         this.socket.connect(new InetSocketAddress(host, port));
         OutputStream os = socket.getOutputStream();
-        for(int i = 0; i < 10000; i++) {
+        socket.sendUrgentData(1);
+        for(int i = 0; i < 100000; i++) {
             os.write("hello".getBytes());
         }
         System.out.println("close socket");
         Long beginTime = System.currentTimeMillis();
-        os.close();
+        socket.close();
         Long endTime = System.currentTimeMillis();
         System.out.println("close time " + (endTime - beginTime) + "ms");
     }
