@@ -25,7 +25,7 @@ class Receiver {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         int port = 20;
-        InputStopType inputStopType = InputStopType.CLOSE;
+        InputStopType inputStopType = InputStopType.NORMAL;
 
         new Receiver(port, inputStopType).receive();
     }

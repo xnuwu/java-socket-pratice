@@ -28,7 +28,7 @@ class Sender {
     public static void main(String[] args) throws IOException, InterruptedException {
         String host = "127.0.0.1";
         int port = 20;
-        OutputStopType outputStopType = OutputStopType.NORMAL;
+        OutputStopType outputStopType = OutputStopType.SUDDEN;
 
         new Sender(host, port, outputStopType).send();
     }
