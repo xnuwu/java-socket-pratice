@@ -48,37 +48,35 @@ public class ThreadSocketServer {
                 @Override
                 public void run() {
                     Socket socket = null;
-                    while (true) {
-                        try {
-                            socket = new Socket("127.0.0.1", 20);
-                            PrintWriter writer = new PrintWriter(socket.getOutputStream());
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    try {
+                        socket = new Socket("127.0.0.1", 20);
+                        PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                            writer.println("what time now is ?");
-                            writer.flush();
+                        writer.println("what time now is ?");
+                        writer.flush();
 
-                            String message = reader.readLine();
-                            System.out.println("message: " + message);
+                        String message = reader.readLine();
+                        System.out.println("message: " + message);
 
-                            Random random = new Random();
-                            Thread.sleep(random.nextInt(1000));
+                        Random random = new Random();
+                        Thread.sleep(random.nextInt(1000));
 
-                            writer.println("bye");
-                            writer.flush();
+                        writer.println("bye");
+                        writer.flush();
 
-                            writer.close();
-                            reader.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } finally {
-                            if(socket != null) {
-                                try {
-                                    socket.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                        writer.close();
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if(socket != null) {
+                            try {
+                                socket.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
                     }
