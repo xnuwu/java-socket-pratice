@@ -1,5 +1,7 @@
 package com.jnet.serverSocket;
 
+import com.jnet.thread.MyThreadPool;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,13 +20,19 @@ public class ThreadSocketServer {
         ServerSocket serverSocket = new ServerSocket(20, 10000);
 
         monitorClient();
+//
+//        while (true) {
+//            Socket socket = serverSocket.accept();
+//            Thread workThread = new Thread(new Handler(socket));
+//
+//            //may be throw "java.lang.OutOfMemoryError: unable to create new native thread"
+//            workThread.start();
+//        }
 
+        MyThreadPool threadPool = new MyThreadPool(100);
         while (true) {
             Socket socket = serverSocket.accept();
-            Thread workThread = new Thread(new Handler(socket));
-
-            //java.lang.OutOfMemoryError: unable to create new native thread
-            workThread.start();
+            threadPool.execute(new Handler(socket));
         }
     }
 
@@ -129,7 +137,7 @@ class Handler implements Runnable {
     private String echo() {
         String ret;
         synchronized (ThreadSocketServer.counter) {
-            ret = "server " + ThreadSocketServer.counter.incrementAndGet() + " time is " + System.currentTimeMillis();
+            ret = "thread[" + Thread.currentThread().getName() + "], server " + ThreadSocketServer.counter.incrementAndGet() + " time is " + System.currentTimeMillis();
         }
         return ret;
     }
