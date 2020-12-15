@@ -23,16 +23,17 @@ public class NoBlockServerSocketChannel {
         serverSocketChannel = ServerSocketChannel.open();
         serverSocketChannel.socket().setReuseAddress(true);
         serverSocketChannel.configureBlocking(false);
-        serverSocketChannel.socket().bind(new InetSocketAddress(20));
+        serverSocketChannel.socket().bind(new InetSocketAddress(2020));
     }
 
     public void service() throws IOException {
 
+        System.out.println("======= NIO Server Started! =======");
+
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-        System.out.println("no block server started!");
         while (selector.select() > 0) {
-            Set<SelectionKey> selectionKeys = selector.selectedKeys();
-            Iterator<SelectionKey> keyIterator = selectionKeys.iterator();
+
+            Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
 
             while (keyIterator.hasNext()) {
                 SelectionKey selectionKey = null;
@@ -45,7 +46,7 @@ public class NoBlockServerSocketChannel {
 
                         ServerSocketChannel ssc = (ServerSocketChannel) selectionKey.channel();
                         SocketChannel socketChannel = ssc.accept();
-                        System.out.println("connected from " + socketChannel.socket().getInetAddress() + ":" + socketChannel.socket().getPort());
+                        System.out.println("connected from " + socketChannel.socket().getInetAddress().getHostAddress() + ":" + socketChannel.socket().getPort());
                         socketChannel.configureBlocking(false);
 
                         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
@@ -57,11 +58,15 @@ public class NoBlockServerSocketChannel {
                         ByteBuffer buffer = (ByteBuffer) selectionKey.attachment();
 
                         ByteBuffer readBuffer = ByteBuffer.allocate(32);
-                        socketChannel.read(readBuffer);
+                        int readNum = socketChannel.read(readBuffer);
                         readBuffer.flip();
 
                         buffer.limit(buffer.capacity());
-                        buffer.put(readBuffer);
+
+                        //if size not enough, discard it
+                        if(buffer.hasRemaining() && buffer.remaining() >= readNum) {
+                            buffer.put(readBuffer);
+                        }
                     }
 
                     if(selectionKey.isWritable()) {
@@ -72,12 +77,12 @@ public class NoBlockServerSocketChannel {
                         buffer.flip();
                         String rawData = decode(buffer);
 
-                        if(rawData.contains("\r\n")) {
+                        if(rawData.contains("\n")) {
 
                             String data = rawData.substring(0, rawData.indexOf("\n") + 1);
-                            String ret = "hello, server receive " + data.length() + " bytes! " + data;
+                            String ret = "hello, server receive " + data.length() + " bytes! " + data + "\n";
                             System.out.println(ret);
-                            write(socketChannel, ret.getBytes());
+                            MySocketChannelUtil.write(socketChannel, ret.getBytes());
 
                             ByteBuffer temp = encode(data);
 
@@ -90,29 +95,15 @@ public class NoBlockServerSocketChannel {
                                 socketChannel.close();
                                 break;
                             }
-
-                        }else{
-                            return;
                         }
                     }
 
                 }catch (IOException e) {
                     e.printStackTrace();
-                    if(selectionKey != null) {
-                        selectionKey.cancel();
-                    }
+                    selectionKey.cancel();
                     selectionKey.channel().close();
                 }
             }
-        }
-    }
-
-    private void write(SocketChannel socketChannel, byte[] data) throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(data.length);
-        buffer.put(data);
-
-        while (buffer.hasRemaining()) {
-            socketChannel.write(buffer);
         }
     }
 
@@ -128,5 +119,6 @@ public class NoBlockServerSocketChannel {
     public static void main(String[] args) throws IOException {
         NoBlockServerSocketChannel noBlockServerSocketChannel = new NoBlockServerSocketChannel();
         noBlockServerSocketChannel.service();
+        System.out.println("service done!");
     }
 }

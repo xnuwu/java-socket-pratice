@@ -3,11 +3,8 @@ package com.jnet.nio;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -61,11 +58,11 @@ public class BlockServerSocketChannel {
 
 
                 String message;
-                while ((message = readLine(socketChannel)) != null) {
+                while ((message = MySocketChannelUtil.readLine(socketChannel)) != null) {
                     System.out.println("receive: " + message);
 
                     if ("bye".equals(message)) {
-                        write(socketChannel, "bye client!".getBytes());
+                        MySocketChannelUtil.write(socketChannel, "bye client!".getBytes());
                         System.out.println("received bye! closing connect!");
                         break;
                     }
@@ -82,56 +79,6 @@ public class BlockServerSocketChannel {
                     }
                 }
             }
-        }
-    }
-
-    private static String readLine(SocketChannel socketChannel) throws IOException {
-
-        //assume line's length less than 1024 byte
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
-        ByteBuffer tempBuffer = ByteBuffer.allocate(1);
-
-        int readSize;
-        String data = null;
-
-        while (true) {
-            tempBuffer.clear();
-            readSize = socketChannel.read(tempBuffer);
-
-            if (readSize == -1) {
-                break;
-            }
-
-            if (readSize == 0) {
-                continue;
-            }
-
-            tempBuffer.flip();
-            buffer.put(tempBuffer);
-
-            buffer.flip();
-            Charset utf8 = Charset.forName("UTF-8");
-            CharBuffer charBuffer = utf8.decode(buffer);
-            data = charBuffer.toString();
-
-            if (data.contains("\r\n")) {
-                data = data.substring(0, data.indexOf("\r\n"));
-                break;
-            }
-
-            buffer.position(buffer.limit());
-            buffer.limit(buffer.capacity());
-        }
-
-        return data;
-    }
-
-    private static void write(SocketChannel socketChannel, byte[] data) throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(data.length);
-        buffer.put(data);
-
-        while (buffer.hasRemaining()) {
-            socketChannel.write(buffer);
         }
     }
 

@@ -11,7 +11,7 @@ import java.util.Iterator;
  * @author: yangxunwu
  * @date: 2020/12/10 11:06
  */
-public class BlockSocketChannel {
+public class NoBlockSocketChannel {
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
