@@ -17,17 +17,29 @@ public class NoBlockThreadServerSocketChannel {
     private Selector selector;
     private Charset charset = Charset.forName("UTF-8");
 
+    private final Object lock = new Object();
+
     public NoBlockThreadServerSocketChannel() throws IOException {
         selector = Selector.open();
         serverSocketChannel = ServerSocketChannel.open();
         serverSocketChannel.socket().setReuseAddress(true);
-        serverSocketChannel.configureBlocking(false);
         serverSocketChannel.socket().bind(new InetSocketAddress(2020));
     }
 
     public void accept() {
         while (true) {
+            try{
+                SocketChannel socketChannel = serverSocketChannel.accept();
+                socketChannel.configureBlocking(false);
 
+                synchronized (lock) {
+                    selector.wakeup();
+                    ByteBuffer buffer = ByteBuffer.allocate(1024);
+                    socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, buffer);
+                }
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -35,8 +47,14 @@ public class NoBlockThreadServerSocketChannel {
 
         System.out.println("======= NIO Thread Server Started! =======");
 
-        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-        while (selector.select() > 0) {
+        while (true) {
+
+            synchronized (lock) {}
+            int readyNum = selector.select();
+
+            if(readyNum == 0) {
+                continue;
+            }
 
             Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
 
@@ -46,17 +64,6 @@ public class NoBlockThreadServerSocketChannel {
                 try{
                     selectionKey = keyIterator.next();
                     keyIterator.remove();
-
-                    if(selectionKey.isAcceptable()) {
-
-                        ServerSocketChannel ssc = (ServerSocketChannel) selectionKey.channel();
-                        SocketChannel socketChannel = ssc.accept();
-                        System.out.println("connected from " + socketChannel.socket().getInetAddress().getHostAddress() + ":" + socketChannel.socket().getPort());
-                        socketChannel.configureBlocking(false);
-
-                        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-                        socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, byteBuffer);
-                    }
 
                     if(selectionKey.isReadable()) {
                         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
@@ -123,6 +130,14 @@ public class NoBlockThreadServerSocketChannel {
 
     public static void main(String[] args) throws IOException {
         NoBlockThreadServerSocketChannel noBlockServerSocketChannel = new NoBlockThreadServerSocketChannel();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                noBlockServerSocketChannel.accept();
+            }
+        }).start();
+
         noBlockServerSocketChannel.service();
         System.out.println("service done!");
     }

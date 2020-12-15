@@ -6,6 +6,9 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: yangxunwu
@@ -13,33 +16,55 @@ import java.util.Iterator;
  */
 public class NoBlockThreadSocketChannel {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
+        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(10, 20, Integer.MAX_VALUE, TimeUnit.MINUTES, new LinkedBlockingQueue<>(), new ThreadPoolExecutor.CallerRunsPolicy());
 
-        SocketChannel socketChannel =  SocketChannel.open(new InetSocketAddress("127.0.0.1", 2020));
-        socketChannel.configureBlocking(false);
+        for(int i = 0; i < 10; i++) {
+            poolExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    sendMessage();
+                }
+            });
+        }
 
-        Selector selector = Selector.open();
-        socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+        poolExecutor.shutdown();
 
-        while (selector.select() > 0) {
+        while (!poolExecutor.awaitTermination(1, TimeUnit.SECONDS)) {
+//            System.out.println("wait thread end " + System.currentTimeMillis());
+        }
+    }
 
-            Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
-            while (keyIterator.hasNext()) {
-                SelectionKey selectionKey = keyIterator.next();
-                keyIterator.remove();
+    public static void sendMessage() {
+        try{
+            SocketChannel socketChannel =  SocketChannel.open(new InetSocketAddress("127.0.0.1", 2020));
+            socketChannel.configureBlocking(false);
 
-                if(selectionKey.isReadable()) {
-                    String data = MySocketChannelUtil.readLine(socketChannel);
+            Selector selector = Selector.open();
+            socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 
-                    if(data != null) {
-                        System.out.println("receive " + data);
+            while (selector.select() > 0) {
+
+                Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
+                while (keyIterator.hasNext()) {
+                    SelectionKey selectionKey = keyIterator.next();
+                    keyIterator.remove();
+
+                    if(selectionKey.isReadable()) {
+                        String data = MySocketChannelUtil.readLine(socketChannel);
+
+                        if(data != null && data.trim().length() > 0) {
+                            System.out.println("receive " + data);
+                        }
+                    }
+
+                    if(selectionKey.isWritable()) {
+                        MySocketChannelUtil.write(socketChannel, (Thread.currentThread() + " hello " + (System.currentTimeMillis()) +"\n").getBytes());
                     }
                 }
-
-                if(selectionKey.isWritable()) {
-                    MySocketChannelUtil.write(socketChannel, ("hello " + (System.currentTimeMillis()) +"\n").getBytes());
-                }
             }
+        }catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
