@@ -54,7 +54,7 @@ public class NoBlockThreadSocketChannel {
                         String data = MySocketChannelUtil.readLine(socketChannel);
 
                         if(data != null && data.trim().length() > 0) {
-                            System.out.println("receive " + data);
+                            System.out.println(data);
                         }
                     }
 

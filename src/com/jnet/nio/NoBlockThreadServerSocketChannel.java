@@ -92,7 +92,7 @@ public class NoBlockThreadServerSocketChannel {
                         if(rawData.contains("\n")) {
 
                             String data = rawData.substring(0, rawData.indexOf("\n") + 1);
-                            String ret = "hello, server receive " + data.length() + " bytes! " + data + "\n";
+                            String ret = "echo: " + data;
                             System.out.println(ret);
                             MySocketChannelUtil.write(socketChannel, ret.getBytes());
 
