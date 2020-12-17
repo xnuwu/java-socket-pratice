@@ -73,8 +73,8 @@ public class PingClient {
 
     private void addFinishTarget(Target target) {
         synchronized (connectFinishedTargetList) {
-            connectFinishedTargetList.add(target);
             connectFinishedTargetList.notifyAll();
+            connectFinishedTargetList.add(target);
         }
     }
 
@@ -94,18 +94,20 @@ public class PingClient {
         }
 
         private void processRegister() {
-            while (readyConnectTargetList.size() > 0) {
-                Target target = readyConnectTargetList.removeFirst();
-                try {
-                    System.out.println("try register " + target.getTarget().getHostName());
-                    target.getChannel().register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, target);
-                } catch (ClosedChannelException e) {
-                    e.printStackTrace();
-                    target.setE(e);
-                    addFinishTarget(target);
-                }
+            synchronized (readyConnectTargetList) {
+                while (readyConnectTargetList.size() > 0) {
+                    Target target = readyConnectTargetList.removeFirst();
+                    try {
+                        System.out.println("try register " + target.getTarget().getHostName());
+                        target.getChannel().register(selector, SelectionKey.OP_CONNECT, target);
+                    } catch (ClosedChannelException e) {
+                        e.printStackTrace();
+                        target.setE(e);
+                        addFinishTarget(target);
+                    }
 
-                System.out.println("registered " + target.getTarget().getHostName());
+                    System.out.println("registered " + target.getTarget().getHostName());
+                }
             }
         }
 
@@ -116,10 +118,10 @@ public class PingClient {
 
                 while (keyIterator.hasNext()) {
                     SelectionKey selectionKey = keyIterator.next();
+                    keyIterator.remove();
                     Target target = (Target) selectionKey.attachment();
                     try{
                         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
-                        keyIterator.remove();
 
                         if(socketChannel.finishConnect()) {
                             target.setEndTime(System.currentTimeMillis());
