@@ -1,5 +1,7 @@
 package com.jnet.http.nio.impl;
 
+import com.jnet.util.ByteBufferCodec;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -8,7 +10,13 @@ import java.nio.ByteBuffer;
  */
 public class Request {
 
+    /**
+     * only receive header
+     * @param byteBuffer
+     * @return
+     */
     public static boolean isComplete(ByteBuffer byteBuffer) {
-        return false;
+        String decodeData = ByteBufferCodec.decode(byteBuffer);
+        return decodeData.contains("\r\n\r\n");
     }
 }
