@@ -3,6 +3,7 @@ package com.jnet.http.nio.impl;
 import com.jnet.http.nio.IHandler;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 
 /**
@@ -18,6 +19,8 @@ public class RequestHandler implements IHandler {
     private ChannelIo channelIo;
 
     private boolean requestReceived;
+    private ByteBuffer requestByteBuffer;
+
     private Request request;
     private Response response;
 
@@ -30,10 +33,16 @@ public class RequestHandler implements IHandler {
     public void handle(SelectionKey selectionKey) {
         try{
             if(request == null) {
+
                 if(!receive()) {
                     return;
                 }
+
+                requestByteBuffer.flip();
+
             }else{
+
+                //结束数据读取
 
             }
         }catch (IOException e) {
@@ -45,7 +54,11 @@ public class RequestHandler implements IHandler {
             }
 
             if(response != null) {
-                response.r();
+                try {
+                    response.release();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }
@@ -56,9 +69,21 @@ public class RequestHandler implements IHandler {
         }
 
         if(channelIo.read() < 0 || Request.isComplete(channelIo.getReadByteBuffer())) {
+            requestByteBuffer = channelIo.getReadByteBuffer();
             return (requestReceived = true);
         }
 
         return false;
+    }
+
+
+    public void build() {
+        Request.Action action = request.getAction();
+
+        if(action != Request.Action.GET && action != Request.Action.HEAD) {
+            response = new Response(Response.Code.METHOD_NOT_ALLOWED, new StringContent("Method Not Allowed"));
+        }else{
+            response = new Response(Response.Code.OK, new FileContent(request.getUri()), action);
+        }
     }
 }
