@@ -22,8 +22,8 @@ public class AcceptHandler implements IHandler {
         //no block mode will return null
         if(socketChannel != null) {
             System.out.println("receive connected from " + socketChannel.socket().getInetAddress() + ":" + socketChannel.socket().getPort());
-            ChannelIo ChannelIo = new ChannelIo(socketChannel, false);
-            RequestHandler requestHandler = new RequestHandler(ChannelIo);
+            ChannelIo channelIo = new ChannelIo(socketChannel, false);
+            RequestHandler requestHandler = new RequestHandler(channelIo);
             socketChannel.register(selectionKey.selector(), SelectionKey.OP_READ, requestHandler);
         }
     }

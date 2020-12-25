@@ -31,19 +31,43 @@ public class RequestHandler implements IHandler {
 
     @Override
     public void handle(SelectionKey selectionKey) {
+        System.out.println("connection writable " + (selectionKey.isWritable() ? "true" : "false") + ", readable " + (selectionKey.isReadable() ? "true" : "false"));
         try{
             if(request == null) {
 
                 if(!receive()) {
                     return;
                 }
+                System.out.println("received finished");
 
                 requestByteBuffer.flip();
+                if(parse()) {
+                    build();
+                }else{
+                    System.out.println("parse failed");
+                }
+
+                try{
+                    response.prepare();
+                }catch (Exception e) {
+                    response.release();
+                    response = new Response(Response.Code.NOT_FOUND, new StringContent(e.getMessage()));
+                    response.prepare();
+                }
+
+                if(send()) {
+                    selectionKey.interestOps(SelectionKey.OP_WRITE);
+                }else{
+                    channelIo.close();
+                    response.release();
+                }
 
             }else{
-
                 //结束数据读取
-
+                if(!send()) {
+                    channelIo.close();
+                    response.release();
+                }
             }
         }catch (IOException e) {
             e.printStackTrace();
@@ -65,17 +89,25 @@ public class RequestHandler implements IHandler {
 
     private boolean receive() throws IOException {
         if(requestReceived) {
+            System.out.println("requestReceived finished");
             return true;
         }
 
-        if(channelIo.read() < 0 || Request.isComplete(channelIo.getReadByteBuffer())) {
+        int readBytes = channelIo.read();
+        System.out.println("receive " + readBytes + " bytes");
+        if(readBytes < 0 || Request.isComplete(channelIo.getReadByteBuffer())) {
             requestByteBuffer = channelIo.getReadByteBuffer();
             return (requestReceived = true);
         }
 
+        System.out.println("requestReceived not finished");
         return false;
     }
 
+    private boolean parse() {
+        request = Request.parse(requestByteBuffer);
+        return true;
+    }
 
     public void build() {
         Request.Action action = request.getAction();
@@ -85,5 +117,10 @@ public class RequestHandler implements IHandler {
         }else{
             response = new Response(Response.Code.OK, new FileContent(request.getUri()), action);
         }
+    }
+
+    private boolean send() throws IOException {
+        System.out.println("start send response data");
+        return response.send(channelIo);
     }
 }

@@ -33,7 +33,7 @@ public class MyCharset {
 
     public static void printBuffer(ByteBuffer buffer) {
         while (buffer.hasRemaining()) {
-            System.out.print(buffer.get());
+            System.out.println(buffer.get());
         }
     }
 }

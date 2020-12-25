@@ -31,7 +31,6 @@ public class ChannelIo {
     }
 
     public int read() throws IOException {
-
         checkReadBufferSize(readByteBuffer.capacity() / 20);
         return socketChannel.read(readByteBuffer);
     }
@@ -49,6 +48,7 @@ public class ChannelIo {
     }
 
     public long transferTo(FileChannel fileChannel, long pos, long len) throws IOException {
+        System.out.println("socketChannel connected " + socketChannel.isConnected());
         return fileChannel.transferTo(pos, len, socketChannel);
     }
 

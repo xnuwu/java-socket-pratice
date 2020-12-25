@@ -14,7 +14,7 @@ import java.nio.channels.FileChannel;
  */
 public class FileContent implements Content {
 
-    public static File ROOT = new File("root");
+    public static File ROOT = new File("E:\\git\\java-socket-pratice\\src\\com\\jnet\\http");
     private File file;
     private String type;
     private long position;
@@ -23,6 +23,7 @@ public class FileContent implements Content {
 
     public FileContent(URI uri) {
         file = new File(ROOT, uri.getPath().replace('/', File.separatorChar));
+        System.out.println("fileContent:" + file.getAbsolutePath());
     }
 
     @Override

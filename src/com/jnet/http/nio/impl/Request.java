@@ -85,7 +85,9 @@ public class Request {
      * @return
      */
     public static boolean isComplete(ByteBuffer byteBuffer) {
-        String decodeData = ByteBufferCodec.decode(byteBuffer);
+        ByteBuffer readOnlyBuffer = byteBuffer.asReadOnlyBuffer();
+        readOnlyBuffer.flip();
+        String decodeData = ByteBufferCodec.decode(readOnlyBuffer);
         return decodeData.contains("\r\n\r\n");
     }
 
@@ -95,7 +97,8 @@ public class Request {
      * @return
      */
     private static ByteBuffer deleteContent(ByteBuffer byteBuffer) {
-        String decodeData = ByteBufferCodec.decode(byteBuffer);
+        ByteBuffer readOnlyBuffer = byteBuffer.asReadOnlyBuffer();
+        String decodeData = ByteBufferCodec.decode(readOnlyBuffer);
         if(decodeData.contains("\r\n\r\n")) {
             return ByteBufferCodec.encode(decodeData.substring(0, decodeData.indexOf("\r\n\r\n")));
         }
@@ -103,16 +106,27 @@ public class Request {
         return byteBuffer;
     }
 
-    private static final Pattern requestPattern = Pattern.compile("\\A([A-Z]+) +[^ ] +HTTP/([0-9\\.]+)$"
-                                                                    + ".*^Host:([^ ]+)$.*\r\n\r\n\\z", Pattern.MULTILINE | Pattern.DOTALL);
+    private static final Pattern requestPattern = Pattern.compile("^([A-Z]+) ([^ ]+) HTTP/([0-9\\.]+).*Host: ([^ ]+)\\r\\n.*", Pattern.MULTILINE | Pattern.DOTALL);
 
     public static Request parse(ByteBuffer byteBuffer) {
+        System.out.println("start parse");
         byteBuffer = deleteContent(byteBuffer);
-        String headerString = ByteBufferCodec.decode(byteBuffer);
+
+        ByteBuffer readOnlyBuffer = byteBuffer.asReadOnlyBuffer();
+        String headerString = ByteBufferCodec.decode(readOnlyBuffer);
+        System.out.println("--------------------- start parse request --------------------- ");
+        System.out.println(headerString);
+        System.out.println("--------------------- end   parse request --------------------- ");
+
         Matcher matcher = requestPattern.matcher(headerString);
         if(!matcher.matches()) {
-            throw new IllegalArgumentException(headerString);
+            throw new IllegalArgumentException("\n" + headerString + "\n");
         }
+
+        System.out.println("method: " + matcher.group(1));
+        System.out.println("host: " + matcher.group(4));
+        System.out.println("url: " + matcher.group(2));
+        System.out.println("version: " + matcher.group(3));
 
         Action a = null;
 
@@ -125,6 +139,8 @@ public class Request {
         URI u = null;
 
         try{
+            String urlString = "http://" + matcher.group(4) + matcher.group(2);
+            System.out.println("uri:" + urlString);
             u = new URI("http://" + matcher.group(4) + matcher.group(2));
         }catch (URISyntaxException e) {
             e.printStackTrace();

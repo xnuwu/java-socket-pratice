@@ -15,7 +15,7 @@ import java.util.Iterator;
  */
 public class HttpServer {
 
-    private static int defaultPort = 20;
+    private static int defaultPort = 2020;
     private int port;
 
     private ServerSocketChannel serverSocketChannel;
@@ -36,6 +36,10 @@ public class HttpServer {
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT, new AcceptHandler());
 
         System.out.println("HttpServer Listen at port " + port);
+    }
+
+    public static void main(String[] args) throws IOException {
+        new HttpServer().service();
     }
 
     /**

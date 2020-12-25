@@ -1,8 +1,10 @@
 package com.jnet.http.nio.impl;
 
 import com.jnet.http.nio.Content;
+import com.jnet.util.ByteBufferCodec;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * @author Xunwu Yang 2020-12-22
@@ -34,6 +36,12 @@ public class StringContent implements Content {
 
     @Override
     public boolean send(ChannelIo channelIo) throws IOException {
+        ByteBuffer responseByteBuffer = ByteBufferCodec.encode(content);
+        responseByteBuffer.flip();
+
+        while (responseByteBuffer.hasRemaining()) {
+            channelIo.write(responseByteBuffer);
+        }
         return false;
     }
 
