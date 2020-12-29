@@ -15,8 +15,6 @@ public class EchoURLConnection extends URLConnection {
 
     private Socket connection = null;
 
-    private final static int DEFAULT_PORT = 8000;
-
     public EchoURLConnection(URL url) {
         super(url);
     }
