@@ -14,7 +14,7 @@ import java.nio.channels.FileChannel;
  */
 public class FileContent implements Content {
 
-    public static File ROOT = new File("E:\\git\\java-socket-pratice\\src\\com\\jnet\\http");
+    public static File ROOT = new File("src/com/jnet/http");
     private File file;
     private String type;
     private long position;
