@@ -1,14 +1,10 @@
 package com.jnet.connection;
 
-import com.sun.xml.internal.ws.util.ByteArrayBuffer;
-
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * httpClient实现
