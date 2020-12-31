@@ -1,4 +1,4 @@
-package com.jnet.udp;
+package com.jnet.udp.echo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
