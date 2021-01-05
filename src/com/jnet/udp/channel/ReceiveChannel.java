@@ -20,7 +20,7 @@ public class ReceiveChannel {
         final int SMALL_SIZE = 4;
 
         boolean isBlock = false;
-        int size = ENOUGH_SIZE;
+        int size = SMALL_SIZE;
 
         if(args.length > 0) {
             int opt = Integer.parseInt(args[0]);
@@ -50,7 +50,7 @@ public class ReceiveChannel {
                 buffer.flip();
                 System.out.println("接收到的数据包大小: " + buffer.remaining() + " " + (ByteBufferCodec.decode(buffer)));
             }
-            Thread.sleep(5000);
+            Thread.sleep(500);
         }
     }
 }

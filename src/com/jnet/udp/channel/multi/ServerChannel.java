@@ -1,4 +1,4 @@
-package com.jnet.udp.channel;
+package com.jnet.udp.channel.multi;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
