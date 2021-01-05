@@ -1,7 +1,6 @@
 package com.jnet.udp.channel;
 
 import com.jnet.util.ByteBufferCodec;
-
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
