@@ -1,6 +1,8 @@
-package com.jnet.serialize;
+package com.jnet.serialize.model;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -8,12 +10,14 @@ import java.util.Random;
  * @author Xunwu Yang 2021-01-09
  * @version 1.0.0
  */
-class Customer implements Serializable {
+public class Customer implements Serializable {
 
     private static int COUNT = 0;
     private String name;
     private Integer age;
     private transient String password;
+
+    private List<Order> orderList = new LinkedList<>();
 
     private Customer() {}
 
@@ -23,6 +27,11 @@ class Customer implements Serializable {
         COUNT++;
         Random random = new Random();
         password = String.valueOf(random.nextInt(10000000));
+    }
+
+    public void addOrder(Order order) {
+        order.setCustomer(this);
+        this.orderList.add(order);
     }
 
     public String getName() {
@@ -62,6 +71,7 @@ class Customer implements Serializable {
                 ", age=" + age +
                 ", password='" + password + '\'' +
                 ", COUNT='" + COUNT + '\'' +
+                ", orderList=" + orderList +
                 '}';
     }
 }

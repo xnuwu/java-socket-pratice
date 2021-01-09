@@ -1,5 +1,8 @@
 package com.jnet.serialize;
 
+import com.jnet.serialize.model.Customer;
+import com.jnet.serialize.model.Order;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,7 +36,12 @@ public class SimpleServer {
                     break;
 
                 case "customer":
-                    object = new Customer("xunwu", 100);
+                    Order apple = new Order("apple");
+                    Order peach = new Order("peach");
+                    Customer customer = new Customer("xunwu", 100);
+                    customer.addOrder(apple);
+                    customer.addOrder(peach);
+                    object = customer;
                     break;
 
                 default:

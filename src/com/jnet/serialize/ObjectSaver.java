@@ -1,8 +1,9 @@
 package com.jnet.serialize;
 
+import com.jnet.serialize.model.Customer;
+
 import java.io.*;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * @author Xunwu Yang 2021-01-09
