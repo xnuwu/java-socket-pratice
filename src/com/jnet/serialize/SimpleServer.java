@@ -32,6 +32,10 @@ public class SimpleServer {
                     object = 10;
                     break;
 
+                case "customer":
+                    object = new Customer("xunwu", 100);
+                    break;
+
                 default:
                     object = System.currentTimeMillis();
                     break;
