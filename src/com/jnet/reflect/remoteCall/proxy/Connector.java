@@ -25,11 +25,9 @@ public class Connector {
     }
 
     public void connect() throws IOException {
-        System.out.println("try connect to " + host + ":" + port);
-        socket =  new Socket(InetAddress.getLocalHost(), port);
+        socket = new Socket(InetAddress.getByName(host), 8000);
         ois = new ObjectInputStream(socket.getInputStream());
         oos = new ObjectOutputStream(socket.getOutputStream());
-        System.out.println("connect success!");
     }
 
     public void send(Object object) throws IOException {
