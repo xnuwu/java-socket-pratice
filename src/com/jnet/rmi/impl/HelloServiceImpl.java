@@ -1,6 +1,7 @@
 package com.jnet.rmi.impl;
 
 import com.jnet.rmi.IHelloService;
+import com.jnet.rmi.IRemoteHelloService;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -11,7 +12,7 @@ import java.util.Date;
  * @author: yangxunwu
  * @date: 2021/1/11 16:49
  */
-public class HelloServiceImpl extends UnicastRemoteObject implements IHelloService {
+public class HelloServiceImpl extends UnicastRemoteObject implements IRemoteHelloService {
 
     private String name;
 
@@ -27,6 +28,7 @@ public class HelloServiceImpl extends UnicastRemoteObject implements IHelloServi
 
     @Override
     public Date time() throws Exception {
+        System.out.println("invoke time");
         return new Date();
     }
 }
