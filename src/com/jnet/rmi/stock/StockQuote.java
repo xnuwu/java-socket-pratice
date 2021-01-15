@@ -8,5 +8,6 @@ import java.rmi.RemoteException;
  * @version 1.0.0
  */
 public interface StockQuote extends Remote {
+    public void timeLine() throws RemoteException;
     public void quote(String stockSymbol, double price) throws RemoteException;
 }
