@@ -1,6 +1,6 @@
-package com.jnet.rmi.impl;
+package com.jnet.rmi.flight.impl;
 
-import com.jnet.rmi.IFlight;
+import com.jnet.rmi.flight.IFlight;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

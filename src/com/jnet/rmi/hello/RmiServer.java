@@ -1,12 +1,11 @@
-package com.jnet.rmi;
+package com.jnet.rmi.hello;
 
-import com.jnet.rmi.impl.HelloServiceImpl;
+import com.jnet.rmi.hello.impl.HelloServiceImpl;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 
 /**
  * @author Xunwu Yang 2021-01-11

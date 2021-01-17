@@ -1,4 +1,4 @@
-package com.jnet.rmi;
+package com.jnet.rmi.serializable;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

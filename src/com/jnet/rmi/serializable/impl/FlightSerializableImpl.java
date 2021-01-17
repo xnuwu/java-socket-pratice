@@ -1,6 +1,6 @@
-package com.jnet.rmi.impl;
+package com.jnet.rmi.serializable.impl;
 
-import com.jnet.rmi.IFlightSerializable;
+import com.jnet.rmi.serializable.IFlightSerializable;
 
 import java.rmi.RemoteException;
 

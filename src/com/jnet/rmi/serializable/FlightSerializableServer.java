@@ -1,6 +1,6 @@
-package com.jnet.rmi;
+package com.jnet.rmi.serializable;
 
-import com.jnet.rmi.impl.FlightSerializableFactory;
+import com.jnet.rmi.serializable.impl.FlightSerializableFactory;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

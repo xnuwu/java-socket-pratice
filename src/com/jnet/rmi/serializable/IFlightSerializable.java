@@ -1,5 +1,6 @@
-package com.jnet.rmi;
+package com.jnet.rmi.serializable;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -7,7 +8,7 @@ import java.rmi.RemoteException;
  * @author Xunwu Yang 2021-01-12
  * @version 1.0.0
  */
-public interface IFlight extends Remote {
+public interface IFlightSerializable extends Serializable {
 
     public String getFlightNumber() throws RemoteException;
 

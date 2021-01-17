@@ -1,6 +1,6 @@
-package com.jnet.rmi;
+package com.jnet.rmi.flight;
 
-import com.jnet.rmi.impl.FlightFactory;
+import com.jnet.rmi.flight.impl.FlightFactory;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

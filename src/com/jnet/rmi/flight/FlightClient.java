@@ -1,4 +1,4 @@
-package com.jnet.rmi;
+package com.jnet.rmi.flight;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

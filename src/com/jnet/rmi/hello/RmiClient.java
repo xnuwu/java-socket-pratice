@@ -1,7 +1,11 @@
-package com.jnet.rmi;
+package com.jnet.rmi.hello;
 
-import javax.naming.*;
-import java.io.IOException;
+import com.jnet.rmi.hello.IRemoteHelloService;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
 
 /**
  * @author Xunwu Yang 2021-01-11

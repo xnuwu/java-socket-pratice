@@ -1,4 +1,4 @@
-package com.jnet.rmi;
+package com.jnet.rmi.hello;
 
 import java.io.IOException;
 import java.util.Date;

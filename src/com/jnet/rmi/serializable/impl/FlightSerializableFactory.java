@@ -1,7 +1,7 @@
-package com.jnet.rmi.impl;
+package com.jnet.rmi.serializable.impl;
 
-import com.jnet.rmi.IFlightSerializable;
-import com.jnet.rmi.IFlightSerializableFactory;
+import com.jnet.rmi.serializable.IFlightSerializable;
+import com.jnet.rmi.serializable.IFlightSerializableFactory;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

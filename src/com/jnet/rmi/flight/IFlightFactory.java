@@ -1,4 +1,4 @@
-package com.jnet.rmi;
+package com.jnet.rmi.flight;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

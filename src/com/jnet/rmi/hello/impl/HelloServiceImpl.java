@@ -1,7 +1,6 @@
-package com.jnet.rmi.impl;
+package com.jnet.rmi.hello.impl;
 
-import com.jnet.rmi.IHelloService;
-import com.jnet.rmi.IRemoteHelloService;
+import com.jnet.rmi.hello.IRemoteHelloService;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
